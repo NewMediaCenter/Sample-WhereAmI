@@ -12,20 +12,14 @@
 
 @interface sample_whereamiAppDelegate : NSObject <UIApplicationDelegate> {
     CLLocationManager *locationManager;
-    IBOutlet UITextView *screenText;
-   
+    
+    IBOutlet UITextView *locationText;
+    IBOutlet UITextView *headingText;
 }
 
-
+int loccount;
+int hdgcount;
 @property (nonatomic, retain) IBOutlet UIWindow *window;
 
-
-
-@property (nonatomic, retain, readonly) NSManagedObjectContext *managedObjectContext;
-@property (nonatomic, retain, readonly) NSManagedObjectModel *managedObjectModel;
-@property (nonatomic, retain, readonly) NSPersistentStoreCoordinator *persistentStoreCoordinator;
-
-- (void)saveContext;
-- (NSURL *)applicationDocumentsDirectory;
 
 @end
