@@ -12,7 +12,7 @@
 @implementation sample_whereamiAppDelegate
 
 
-@synthesize window=_window;
+@synthesize window=_window, reverseGeocoder;
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
@@ -46,7 +46,22 @@
     CLLocationCoordinate2D loc = [userLocation coordinate];
     MKCoordinateRegion region = MKCoordinateRegionMakeWithDistance(loc, 250, 250);
     [worldView setRegion:region animated:TRUE];
+    self.reverseGeocoder = [[[MKReverseGeocoder alloc] initWithCoordinate:loc] autorelease];
+    reverseGeocoder.delegate = self;
+    [reverseGeocoder start];
     
+   
+    
+}
+
+- (void)reverseGeocoder:(MKReverseGeocoder *)geocoder didFailWithError:(NSError *)error
+{
+    
+}
+
+- (void)reverseGeocoder:(MKReverseGeocoder *)geocoder didFindPlacemark:(MKPlacemark *)placemark
+{
+    textBox.text = [placemark description];
 }
 - (void)locationManager:(CLLocationManager *)manager didUpdateHeading:(CLHeading *)newHeading
 {
@@ -56,40 +71,9 @@
    
     
 }
--(void)findLocation
-{
-    [locationManager startUpdatingLocation];
-    [activityIndicator startAnimating];
-    [locationTitleField setHidden:YES];
 
-}
--(void)foundLocation:(CLLocation *)loc;
-{
-    CLLocationCoordinate2D coord = [loc coordinate];
-    //create an instance of mappoint with current data
-    MapPoint *mp = [[MapPoint alloc] initWithCoordinate:coord title:[locationTitleField text]];
-    
-    //add it
-    [worldView addAnnotation:mp];
-    //since worldview retains, we release.
-    [mp release];
-    
-    //zoom into this location
-    MKCoordinateRegion foundRegion = MKCoordinateRegionMakeWithDistance(coord, 250, 250);
-    [worldView setRegion:foundRegion animated:YES];
-    [locationTitleField setText:@""];
-    [activityIndicator stopAnimating];
-    [locationTitleField setHidden:NO];
-    [locationManager stopUpdatingLocation];
-    
-}
 
-- (BOOL)textFieldShouldReturn:(UITextField *)textField
-{
-    [self findLocation];
-    [textField resignFirstResponder];
-    return TRUE;
-}
+
 - (void)locationManager:(CLLocationManager *)manager
        didFailWithError:(NSError *)error
 {

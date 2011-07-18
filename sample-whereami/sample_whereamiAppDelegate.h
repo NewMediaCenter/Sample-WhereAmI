@@ -15,8 +15,8 @@
 @interface sample_whereamiAppDelegate : NSObject <UIApplicationDelegate, CLLocationManagerDelegate, MKMapViewDelegate, UITextFieldDelegate> {
     CLLocationManager *locationManager;
     IBOutlet MKMapView *worldView;
-    IBOutlet UIActivityIndicatorView *activityIndicator;
-    IBOutlet UITextField *locationTitleField;
+    IBOutlet UITextView *textBox;
+    MKReverseGeocoder *reverseGeocoder;
 
 
 }
@@ -25,6 +25,6 @@
 -(void)foundLocation:(CLLocation *)loc;
 
 @property (nonatomic, retain) IBOutlet UIWindow *window;
-
+@property (nonatomic, retain) MKReverseGeocoder *reverseGeocoder;
 
 @end
