@@ -8,17 +8,22 @@
 
 #import <UIKit/UIKit.h>
 #import <CoreLocation/CoreLocation.h>
+#import <MapKit/MapKit.h>
 
 
-@interface sample_whereamiAppDelegate : NSObject <UIApplicationDelegate> {
+
+@interface sample_whereamiAppDelegate : NSObject <UIApplicationDelegate, CLLocationManagerDelegate, MKMapViewDelegate, UITextFieldDelegate> {
     CLLocationManager *locationManager;
-    
-    IBOutlet UITextView *locationText;
-    IBOutlet UITextView *headingText;
+    IBOutlet MKMapView *worldView;
+    IBOutlet UIActivityIndicatorView *activityIndicator;
+    IBOutlet UITextField *locationTitleField;
+
+
 }
 
-int loccount;
-int hdgcount;
+-(void)findLocation;
+-(void)foundLocation:(CLLocation *)loc;
+
 @property (nonatomic, retain) IBOutlet UIWindow *window;
 
 

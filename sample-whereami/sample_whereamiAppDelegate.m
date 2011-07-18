@@ -7,7 +7,7 @@
 //
 
 #import "sample_whereamiAppDelegate.h"
-
+#import "MapPoint.h"
 
 @implementation sample_whereamiAppDelegate
 
@@ -30,46 +30,71 @@
     [locationManager setDesiredAccuracy:kCLLocationAccuracyBest];
     //start
     [locationManager startUpdatingHeading];
-    [locationManager startUpdatingLocation];
+   // [locationManager startUpdatingLocation];
     NSLog(@"Starting");
-    int loccount = 0;
-    int hdgcount = 0;
+    [worldView setShowsUserLocation:YES];
+    
     // Override point for customization after application launch.
     [self.window makeKeyAndVisible];
     return YES;
 }
 
-- (void)locationManager:(CLLocationManager *)manager didUpdateToLocation:(CLLocation *)newLocation fromLocation:(CLLocation *)oldLocation{
-    NSLog(@"Update Found");
-    NSLog(@"%@",newLocation);
-    //[screenText setText:@"yay this works"];
-    
-    locationText.text = [newLocation description];
-    float mph = [newLocation speed] * 3.6;
-    locationText.text = [locationText.text stringByAppendingString:[NSString stringWithFormat:@" \n\n MPH: %f", mph]];
-    
-    locationText.text = [locationText.text stringByAppendingString:[NSString stringWithFormat:@" \n\nALT: %f", [newLocation altitude]]];
+
+
+- (void)mapView:(MKMapView *)mapView didUpdateUserLocation:(MKUserLocation *)userLocation
+{
+    CLLocationCoordinate2D loc = [userLocation coordinate];
+    MKCoordinateRegion region = MKCoordinateRegionMakeWithDistance(loc, 250, 250);
+    [worldView setRegion:region animated:TRUE];
     
 }
-
 - (void)locationManager:(CLLocationManager *)manager didUpdateHeading:(CLHeading *)newHeading
 {
     
-    headingText.text = [newHeading description];
+  
     
    
     
 }
+-(void)findLocation
+{
+    [locationManager startUpdatingLocation];
+    [activityIndicator startAnimating];
+    [locationTitleField setHidden:YES];
 
+}
+-(void)foundLocation:(CLLocation *)loc;
+{
+    CLLocationCoordinate2D coord = [loc coordinate];
+    //create an instance of mappoint with current data
+    MapPoint *mp = [[MapPoint alloc] initWithCoordinate:coord title:[locationTitleField text]];
+    
+    //add it
+    [worldView addAnnotation:mp];
+    //since worldview retains, we release.
+    [mp release];
+    
+    //zoom into this location
+    MKCoordinateRegion foundRegion = MKCoordinateRegionMakeWithDistance(coord, 250, 250);
+    [worldView setRegion:foundRegion animated:YES];
+    [locationTitleField setText:@""];
+    [activityIndicator stopAnimating];
+    [locationTitleField setHidden:NO];
+    [locationManager stopUpdatingLocation];
+    
+}
+
+- (BOOL)textFieldShouldReturn:(UITextField *)textField
+{
+    [self findLocation];
+    [textField resignFirstResponder];
+    return TRUE;
+}
 - (void)locationManager:(CLLocationManager *)manager
        didFailWithError:(NSError *)error
 {
-    locationText.text = [locationText.text stringByAppendingString:@"ERROR: "];
-    locationText.text = [locationText.text stringByAppendingString:[error description]];
-    locationText.text = [locationText.text stringByAppendingString:@"\n"];
-    NSLog(@"ERR: CouldNotFindLocation: %@", error);
+    
 }
-
 
 
 - (void)applicationWillResignActive:(UIApplication *)application
