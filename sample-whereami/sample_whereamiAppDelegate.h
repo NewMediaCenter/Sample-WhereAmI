@@ -12,7 +12,7 @@
 
 
 
-@interface sample_whereamiAppDelegate : NSObject <UIApplicationDelegate, CLLocationManagerDelegate, MKMapViewDelegate, UITextFieldDelegate> {
+@interface sample_whereamiAppDelegate : NSObject <UIApplicationDelegate, CLLocationManagerDelegate, MKMapViewDelegate, UITextFieldDelegate, MKReverseGeocoderDelegate> {
     CLLocationManager *locationManager;
     IBOutlet MKMapView *worldView;
     IBOutlet UITextView *textBox;
@@ -21,8 +21,9 @@
 
 }
 
--(void)findLocation;
--(void)foundLocation:(CLLocation *)loc;
+- (void)reverseGeocoder:(MKReverseGeocoder *)geocoder didFailWithError:(NSError *)error;
+- (void)reverseGeocoder:(MKReverseGeocoder *)geocoder didFindPlacemark:(MKPlacemark *)placemark;
+
 
 @property (nonatomic, retain) IBOutlet UIWindow *window;
 @property (nonatomic, retain) MKReverseGeocoder *reverseGeocoder;
